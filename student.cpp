@@ -24,8 +24,6 @@ void displayTurtle(int r);
 
 #define TIMEOUT 17 // bigger number slows down simulation so you can see what's happening
 
-int countdown;
-
 typedef enum {
     up,
     right,
@@ -57,6 +55,7 @@ typedef struct random {
     int m;
     bool b;
     int q;
+    int countdown;
 }
 ran;
 
@@ -70,11 +69,11 @@ bool moveTurtle(QPointF & pos_) {
     static coo place;
     static ran rando;
 
-    ROS_INFO("Turtle update Called  countdown=%i", countdown);
+    ROS_INFO("Turtle update Called  countdown=%i", rando.countdown);
 
     rando.m = true;
 
-    if (countdown == 0) {
+    if (rando.countdown == 0) {
         ROS_INFO("begin countdown loop" );
         place.xa = pos_.x();
         place.ya = pos_.y();
@@ -341,8 +340,8 @@ bool moveTurtle(QPointF & pos_) {
         }
     
     }
-    if (countdown == 0) countdown = TIMEOUT;
-    else countdown -= 1;
+    if (rando.countdown == 0) rando.countdown = TIMEOUT;
+    else rando.countdown -= 1;
 
     // display the turtle -- must call this function before returning!
     displayTurtle(d);
