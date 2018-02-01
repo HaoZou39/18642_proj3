@@ -22,7 +22,6 @@ void displayTurtle(int r);
 
 // OK to change below this point
 
-#define TIMEOUT 17 // bigger number slows down simulation so you can see what's happening
 
 typedef enum {
     up,
@@ -49,13 +48,14 @@ typedef struct coordinates {
 }
 coo;
 
-typedef struct random {
+typedef struct randosm {
     bool z;
     bool e;
     int m;
     bool b;
     int q;
     int countdown;
+    int TIMEOUT = 17; // bigger number slows down simulation so you can see what's happening
 }
 ran;
 
@@ -69,12 +69,12 @@ bool moveTurtle(QPointF & pos_) {
     static coo place;
     static ran rando;
 
-    ROS_INFO("Turtle update Called  countdown=%i", rando.countdown);
+    //ROS_INFO("Turtle update Called  countdown=%i", rando.countdown);
 
     rando.m = true;
 
     if (rando.countdown == 0) {
-        ROS_INFO("begin countdown loop" );
+        //ROS_INFO("begin countdown loop" );
         place.xa = pos_.x();
         place.ya = pos_.y();
         place.xb = pos_.x();
@@ -83,23 +83,23 @@ bool moveTurtle(QPointF & pos_) {
         switch (d) {
         case right:
             place.xb += 1;
-            ROS_INFO("countdown loop right case" );
+            //ROS_INFO("countdown loop right case" );
             break;
         case up:
             place.yb += 1;
-            ROS_INFO("countdown loop up case" );
+            //ROS_INFO("countdown loop up case" );
             break;
         case left:
             place.xb += 1;
             place.yb += 1;
             place.ya += 1;
-            ROS_INFO("countdown loop left case" );
+            //ROS_INFO("countdown loop left case" );
             break;
         case down:
             place.xb += 1;
             place.yb += 1;
             place.xa += 1;
-            ROS_INFO("countdown loop down case" );
+            //ROS_INFO("countdown loop down case" );
             break;
         default:
             break;
@@ -109,13 +109,13 @@ bool moveTurtle(QPointF & pos_) {
         rando.b = bumped(place.xa, place.ya, place.xb, place.yb);
         rando.e = atend(pos_.x(), pos_.y());
 
-        ROS_INFO("before switch bump = %d" , rando.b );
-        ROS_INFO("before switch attend = %d" , rando.e );
+        //ROS_INFO("before switch bump = %d" , rando.b );
+        //ROS_INFO("before switch attend = %d" , rando.e );
 
         /*The if/else statements below make the turtle turn to the right of its relative orientation
   and checks if it bumps into a wall. If it does bump into a wall, it turns the turtle to the
   left of its initial orientation*/
-      ROS_INFO("d value = %i", d );
+      //ROS_INFO("d value = %i", d );
 
         switch (d) {
         case up:
@@ -153,7 +153,7 @@ bool moveTurtle(QPointF & pos_) {
             }
 
 
-            ROS_INFO("Switch up State = %i  Switch up Orientation = %i", s, d );
+            ///ROS_INFO("Switch up State = %i  Switch up Orientation = %i", s, d );
             break;
 
         case left:
@@ -190,7 +190,7 @@ bool moveTurtle(QPointF & pos_) {
                 break; //ROS_ERROR
             }
 
-            ROS_INFO("Switch left State = %i  Switch left Orientation = %i", s, d );
+            ///ROS_INFO("Switch left State = %i  Switch left Orientation = %i", s, d );
             break;
 
         case down:
@@ -227,7 +227,7 @@ bool moveTurtle(QPointF & pos_) {
                 break; //ROS_ERROR
             }
 
-            ROS_INFO("Switch down State = %i  Switch down Orientation = %i", s, d );
+            ///ROS_INFO("Switch down State = %i  Switch down Orientation = %i", s, d );
             break;
 
         case right:
@@ -264,7 +264,7 @@ bool moveTurtle(QPointF & pos_) {
                 break; //ROS_ERROR
             }
 
-            ROS_INFO("Switch right State = %i  Switch right Orientation = %i", s, d );
+            //ROS_INFO("Switch right State = %i  Switch right Orientation = %i", s, d );
             break;
 
         default:
@@ -300,39 +300,39 @@ bool moveTurtle(QPointF & pos_) {
         }
 
 
-        ROS_INFO("Orientation=%i  STATE=%i", d, s);
+        //ROS_INFO("Orientation=%i  STATE=%i", d, s);
         rando.z = s == 2;
         rando.m = true;
 
-        ROS_INFO("rando.z = %d" , rando.z );
-        ROS_INFO("rando.m = %d" , rando.m );
-        ROS_INFO("rando.e = %d" , rando.e );
+        //ROS_INFO("rando.z = %d" , rando.z );
+        //ROS_INFO("rando.m = %d" , rando.m );
+        //ROS_INFO("rando.e = %d" , rando.e );
 
         if (rando.z == true && rando.e == false) {
-          ROS_INFO("rando.z is true and rando.e is false" );
+          //ROS_INFO("rando.z is true and rando.e is false" );
             switch (d) {
             case noName:
                 pos_.setY(pos_.y() + 0);
-                ROS_INFO("z & e noName case" );
+                //ROS_INFO("z & e noName case" );
                 break;
             case left:
                 pos_.setY(pos_.y() + 1);
-                ROS_INFO("z & e left case" );
+                //ROS_INFO("z & e left case" );
                 break;
             case down:
                 pos_.setX(pos_.x() + 1);
-                ROS_INFO("z & e down case" );
+                //ROS_INFO("z & e down case" );
                 break;
             case right:
                 pos_.setY(pos_.y() - 1);
-                ROS_INFO("z & e right case" );
+                //ROS_INFO("z & e right case" );
                 break;
             case up:
                 pos_.setX(pos_.x() - 1);
-                ROS_INFO("z & e up case" );
+                //ROS_INFO("z & e up case" );
                 break;
             default:
-                ROS_INFO("z & e default case" );
+                //ROS_INFO("z & e default case" );
                 break; //ROS_ERROR
             }
             rando.z = true;
@@ -340,7 +340,7 @@ bool moveTurtle(QPointF & pos_) {
         }
     
     }
-    if (rando.countdown == 0) rando.countdown = TIMEOUT;
+    if (rando.countdown == 0) rando.countdown = rando.TIMEOUT;
     else rando.countdown -= 1;
 
     // display the turtle -- must call this function before returning!
