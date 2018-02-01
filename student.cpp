@@ -116,148 +116,85 @@ bool moveTurtle(QPointF & pos_) {
         /*The if/else statements below make the turtle turn to the right of its relative orientation
   and checks if it bumps into a wall. If it does bump into a wall, it turns the turtle to the
   left of its initial orientation*/
+      ROS_INFO("d value = %i", d );
 
         switch (d) {
         case up:
-            switch (s) {
-            case state2:
+            if (s == state2) {
                 d = right;
                 s = state1;
-                ROS_INFO("Switch up state2 one" );
-                break;
-            case state0:
-                break;
-            case state1:
-                break;
-            case state5:
-                break;
-            default:
-                break; //ROS_ERROR;
-            }
-            if (rando.b) {
+            } else if (rando.b) {
                 d = left;
                 s = state0;
-                ROS_INFO("Switch up bump" );
-            } else {
-                s = state2;
-                ROS_INFO("Switch up state2 two" );
-            }
+            } else s = state2;
             ROS_INFO("Switch up State = %i  Switch up Orientation = %i", s, d );
             break;
 
         case left:
-            switch (s) {
-            case state2:
+            if (s == state2) {
                 d = up;
                 s = state1;
-                ROS_INFO("Switch left state2 one" );
-                break;
-            case state0:
-                break;
-            case state1:
-                break;
-            case state5:
-                break;
-            default:
-                break; //ROS_ERROR;
-            }
-            if (rando.b) {
+            } else if (rando.b) {
                 d = down;
                 s = state0;
-                ROS_INFO("Switch left bump" );
-            } else {
-                s = state2;
-                ROS_INFO("Switch left state2 two" );
-            }
+            } else s = state2;
             ROS_INFO("Switch left State = %i  Switch left Orientation = %i", s, d );
             break;
 
         case down:
-            switch (s) {
-            case state2:
+            if (s == state2) {
                 d = left;
                 s = state1;
-                ROS_INFO("Switch down state2 one" );
-                break;
-            case state0:
-                break;
-            case state1:
-                break;
-            case state5:
-                break;
-            default:
-                break; //ROS_ERROR
-            }
-            if (rando.b) {
+            } else if (rando.b) {
                 d = right;
                 s = state0;
-                ROS_INFO("Switch down bump" );
-            } else {
-                s = state2;
-                ROS_INFO("Switch down state2 two" );
-            }
+            } else s = state2;
             ROS_INFO("Switch down State = %i  Switch down Orientation = %i", s, d );
             break;
 
         case right:
-            switch (s) {
-            case state2:
+            if (s == state2) {
                 d = down;
                 s = state1;
-                ROS_INFO("Switch right state2 one" );
-                break;
-            case state0:
-                break;
-            case state1:
-                break;
-            case state5:
-                break;
-            default:
-                break; //ROS_ERROR
-            }
-            if (rando.b) {
+            } else if (rando.b) {
                 d = up;
                 s = state0;
-                ROS_INFO("Switch right bump" );
-            } else {
-                s = state2;
-                ROS_INFO("Switch right state2 two" );
-            }
+            } else s = state2;
             ROS_INFO("Switch right State = %i  Switch right Orientation = %i", s, d );
             break;
 
         default:
+              switch (s) {
+              case state5:
+                  d = left;
+                  s = state0;
+                  ROS_INFO("Outer switch state5" );
+                  break;
+              case state0:
+                  ROS_INFO("Outer switch state0" );
+                  break;
+              case state1:
+                  ROS_INFO("Outer switch state1" );
+                  break;
+              case state2:
+                  ROS_INFO("Outer switch state2" );
+                  break;
+              default:
+                  ROS_INFO("Outer switch default" );
+                  break; //ROS_ERROR
+              }
+              if (rando.b) {
+                  d = right;
+                  s = state1;
+                  ROS_INFO("Outer switch bump" );
+              } else {
+                  s = state2;
+                  ROS_INFO("Outer switch no bump state2" );
+              }
             ROS_INFO("Default State = %i  Default 1 Orientation = %i", s, d );
             break; //ROS_ERROR
         }
 
-        switch (s) {
-        case state5:
-            d = left;
-            s = state0;
-            ROS_INFO("Outer switch state5" );
-            break;
-        case state0:
-            ROS_INFO("Outer switch state0" );
-            break;
-        case state1:
-            ROS_INFO("Outer switch state1" );
-            break;
-        case state2:
-            ROS_INFO("Outer switch state2" );
-            break;
-        default:
-            ROS_INFO("Outer switch default" );
-            break; //ROS_ERROR
-        }
-        if (rando.b) {
-            d = right;
-            s = state1;
-            ROS_INFO("Outer switch bump" );
-        } else {
-            s = state2;
-            ROS_INFO("Outer switch no bump state2" );
-        }
 
         ROS_INFO("Orientation=%i  STATE=%i", d, s);
         rando.z = s == 2;
