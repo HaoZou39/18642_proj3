@@ -120,46 +120,151 @@ bool moveTurtle(QPointF & pos_) {
 
         switch (d) {
         case up:
-            if (s == state2) {
+            switch(s){
+              case state2:
                 d = right;
                 s = state1;
-            } else if (rando.b) {
-                d = left;
-                s = state0;
-            } else s = state2;
+                break;
+              case state0:
+                if (rando.b) {
+                  d = left;
+                  s = state0;
+                } else{ 
+                    s = state2;
+                }
+                break;
+              case state1:
+                if (rando.b) {
+                  d = left;
+                  s = state0;
+                } else{ 
+                    s = state2;
+                }
+                break;
+              case state5:
+                if (rando.b) {
+                  d = left;
+                  s = state0;
+                } else{ 
+                    s = state2;
+                }
+                break;
+              default:
+                break; //ROS_ERROR
+            }
+
+
             ROS_INFO("Switch up State = %i  Switch up Orientation = %i", s, d );
             break;
 
         case left:
-            if (s == state2) {
+            switch(s){
+              case state2:
                 d = up;
                 s = state1;
-            } else if (rando.b) {
-                d = down;
-                s = state0;
-            } else s = state2;
+                break;
+              case state0:
+                if (rando.b) {
+                  d = down;
+                  s = state0;
+                } else {
+                  s = state2;
+                }
+                break;
+              case state1:
+                if (rando.b) {
+                  d = down;
+                  s = state0;
+                } else {
+                  s = state2;
+                }
+                break;
+              case state5:
+                if (rando.b) {
+                  d = down;
+                  s = state0;
+                } else {
+                  s = state2;
+                }
+                break;
+              default:
+                break; //ROS_ERROR
+            }
+
             ROS_INFO("Switch left State = %i  Switch left Orientation = %i", s, d );
             break;
 
         case down:
-            if (s == state2) {
+            switch(s){
+              case state2:
                 d = left;
                 s = state1;
-            } else if (rando.b) {
-                d = right;
-                s = state0;
-            } else s = state2;
+                break;
+              case state0:
+                if (rando.b) {
+                  d = right;
+                  s = state0;
+                } else{
+                  s = state2;
+                }
+                break;
+              case state1:
+                if (rando.b) {
+                  d = right;
+                  s = state0;
+                } else{
+                  s = state2;
+                }
+                break;
+              case state5:
+                if (rando.b) {
+                  d = right;
+                  s = state0;
+                } else{
+                  s = state2;
+                }
+                break;
+              default:
+                break; //ROS_ERROR
+            }
+
             ROS_INFO("Switch down State = %i  Switch down Orientation = %i", s, d );
             break;
 
         case right:
-            if (s == state2) {
+            switch(s){
+              case state2:
                 d = down;
                 s = state1;
-            } else if (rando.b) {
-                d = up;
-                s = state0;
-            } else s = state2;
+                break;
+              case state0:
+                if (rando.b) {
+                  d = up;
+                  s = state0;
+                } else{
+                  s = state2;
+                }
+                break;
+              case state1:
+                if (rando.b) {
+                  d = up;
+                  s = state0;
+                } else{
+                  s = state2;
+                }
+                break;
+              case state5:
+                if (rando.b) {
+                  d = up;
+                  s = state0;
+                } else{
+                  s = state2;
+                }
+                break;
+              default:
+                break; //ROS_ERROR
+            }
+
             ROS_INFO("Switch right State = %i  Switch right Orientation = %i", s, d );
             break;
 
