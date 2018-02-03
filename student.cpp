@@ -45,7 +45,7 @@ typedef struct coordinates {
     int yb = 0;
 }coo;
 
-typedef struct randosm {
+typedef struct random {
     bool z;
     bool e;
     int m;
