@@ -4,7 +4,7 @@
  *
  * STUDENT NAME:Darius Davis
  * ANDREW ID: dariusd
- * LAST UPDATE: 1/25/18 2:20am
+ * LAST UPDATE: 2/9/18
  *
  * This file is an algorithm to solve the ece642rtle maze
  * using the left-hand rule. The code is intentionaly left obfuscated.
@@ -19,247 +19,117 @@
 bool bumped(int xa, int ya, int xb, int yb);
 bool atend(int x, int y);
 void displayTurtle(int r);
-
 // OK to change below this point
 
+void upBump(bool bumped);
+void leftBump(bool bumped);
+void downBump(bool bumped);
+void rightBump(bool bumped);
 
 typedef enum {
     up,
     right,
     down,
     left,
-    noName
 }direction;
 
 typedef enum {
-    state0,
-    state1,
-    state2,
-    state5 = 5
+    hitWall, 
+    checkSpace,
+    clearSpace,
 }state;
 
 typedef struct coordinates {
-    int xa = 0;
-    int ya = 0;
-    int xb = 0;
-    int yb = 0;
+    uint32_t xa = 0;
+    uint32_t ya = 0;
+    uint32_t xb = 0;
+    uint32_t yb = 0;
 }coo;
 
-typedef struct random {
-    bool z;
-    bool e;
-    int m;
-    bool b;
-    int q;
+typedef struct miscellaneous {
+    bool stepAllowed;
+    bool finished;
+    bool moving;
+    bool bumped;
     int countdown;
-    int TIMEOUT = 17; // bigger number slows down simulation so you can see what's happening
-}ran;
+    const int TIMEOUT = 17; // bigger number slows down simulation so you can see what's happening
+}misc;
+
+static direction d;
+static state s;
+static coo place;
+static misc m;
 
 // this procedure takes one step in the maze and returns   true=done / false=not done
 
-// Ground rule -- you are only allowed to call the three helper functions above, and NO other turtle methods or maze methods (no peeking at the maze!)
-
 bool moveTurtle(QPointF & pos_) {
-    static direction d;
-    static state s;
-    static coo place;
-    static ran rando;
 
-    rando.m = true;
+    m.moving = true;
 
-    if (rando.countdown == 0) {
-        place.xa = pos_.x();
-        place.ya = pos_.y();
-        place.xb = pos_.x();
-        place.yb = pos_.y();
+    if (m.countdown == 0) {
+      place.xa = pos_.x();
+      place.ya = pos_.y();
+      place.xb = pos_.x();
+      place.yb = pos_.y();
 
-        switch (d) {
-        case right:
-             place.xb += 1;
-             break;
-        case up:
-             place.yb += 1;
-             break;
-        case left:
-             place.xb += 1;
-             place.yb += 1;
-             place.ya += 1;
-             break;
-        case down:
-             place.xb += 1;
-             place.yb += 1;
-             place.xa += 1;
-             break;
-        default:
-             break;
-             ROS_ERROR("Movement error");
-        }
+      switch (d) {
+      case right:
+           place.xb += 1;
+           break;
+      case up:
+           place.yb += 1;
+           break;
+      case left:
+           place.xb += 1;
+           place.yb += 1;
+           place.ya += 1;
+           break;
+      case down:
+           place.xb += 1;
+           place.yb += 1;
+           place.xa += 1;
+           break;
+      default:
+           break;
+           ROS_ERROR("Movement error");
+      }
 
-        rando.b = bumped(place.xa, place.ya, place.xb, place.yb);
-        rando.e = atend(pos_.x(), pos_.y());
+        m.bumped = bumped(place.xa, place.ya, place.xb, place.yb);
+        m.finished = atend(pos_.x(), pos_.y());
 
-        /*The if/else statements below make the turtle turn to the right of its relative orientation
-          and checks if it bumps into a wall. If it does bump into a wall, it turns the turtle to the
-          left of its initial orientation*/
+        /*The switch statement below keeps track of the turtles current orientation and calls the correct function to check if
+          it bumped into a wall. If the turtle does bump into a wall the called funtion turns it to a different orientation*/
 
         switch (d) {
         case up:
-            switch(s){
-              case state2:
-                   d = right;
-                   s = state1;
-                   break;
-              case state0:
-                   if (rando.b) {
-                      d = left;
-                      s = state0;
-                   }else{ 
-                      s = state2;
-                   }
-                   break;
-              case state1:
-                   if (rando.b) {
-                      d = left;
-                      s = state0;
-                   }else{ 
-                      s = state2;
-                   }
-                   break;
-              case state5:
-                   if (rando.b) {
-                      d = left;
-                      s = state0;
-                   }else{ 
-                      s = state2;
-                   }
-                   break;
-              default:
-                   ROS_ERROR("Up case: state error");
-                   break;
-            }
-            break;
+          upBump(m.bumped);
+          break;
 
         case left:
-            switch(s){
-              case state2:
-                   d = up;
-                   s = state1;
-                   break;
-              case state0:
-                   if (rando.b) {
-                      d = down;
-                      s = state0;
-                   }else{
-                      s = state2;
-                   }
-                   break;
-              case state1:
-                   if (rando.b) {
-                      d = down;
-                      s = state0;
-                   }else{
-                      s = state2;
-                   }
-                   break;
-              case state5:
-                   if (rando.b) {
-                      d = down;
-                      s = state0;
-                   }else{
-                      s = state2;
-                   }
-                   break;
-              default:
-                   ROS_ERROR("Left case: state error");
-                   break;
-            }
-            break;
+          leftBump(m.bumped);
+              break;
 
         case down:
-            switch(s){
-              case state2:
-                   d = left;
-                   s = state1;
-                   break;
-              case state0:
-                   if (rando.b) {
-                      d = right;
-                      s = state0;
-                   }else{
-                      s = state2;
-                   }
-                   break;
-              case state1:
-                   if (rando.b) {
-                      d = right;
-                      s = state0;
-                   }else{
-                      s = state2;
-                   }
-                   break;
-              case state5:
-                   if (rando.b) {
-                      d = right;
-                      s = state0;
-                   }else{
-                      s = state2;
-                   }
-                   break;
-              default:
-                   ROS_ERROR("Down case: state error");
-                   break;
-            }
-            break;
+          downBump(m.bumped);
+          break;
 
         case right:
-            switch(s){
-              case state2:
-                   d = down;
-                   s = state1;
-                   break;
-              case state0:
-                   if (rando.b) {
-                      d = up;
-                      s = state0;
-                   }else{
-                      s = state2;
-                   }
-                   break;
-              case state1:
-                   if (rando.b) {
-                      d = up;
-                      s = state0;
-                   }else{
-                      s = state2;
-                   }
-                   break;
-              case state5:
-                   if (rando.b) {
-                      d = up;
-                      s = state0;
-                   }else{
-                      s = state2;
-                   }
-                   break;
-              default:
-                   ROS_ERROR("Right case: state error");
-                   break;
-            }
-            break;
+          rightBump(m.bumped);
+          break;
 
         default:
-            ROS_ERROR("Directional error");
-            break;
+          ROS_ERROR("Directional error");
+          break;
         }
 
-        rando.z = s == 2;
-        rando.m = true;
+        m.stepAllowed = (s == 2);
+        m.moving = true;
 
-        if (rando.z == true && rando.e == false) {
+
+        /*If there is a clear space and the turtle is not finished, this function moves
+          it forward one step.*/
+        if (m.stepAllowed == true && m.finished == false) {
             switch (d) {
-            case noName:
-                 pos_.setY(pos_.y() + 0);
-                 break;
             case left:
                  pos_.setY(pos_.y() + 1);
                  break;
@@ -273,18 +143,134 @@ bool moveTurtle(QPointF & pos_) {
                  pos_.setX(pos_.x() - 1);
                  break;
             default:
-                 ROS_ERROR("z & e: directional error");
+                 ROS_ERROR("stepAllowed & finished: step error");
                  break;
             }
-            rando.z = true;
-            rando.m = false;
+            m.stepAllowed = true;
+            m.moving = false;
         }
     }
 
-    if (rando.countdown == 0) rando.countdown = rando.TIMEOUT;
-    else rando.countdown -= 1;
-
+    if(m.countdown == 0){
+      m.countdown = m.TIMEOUT;
+    }else{
+      m.countdown -= 1;
+    }
     // display the turtle -- must call this function before returning!
     displayTurtle(d);
-    return (rando.e);
+    return (m.finished);
+}
+/*The functions upBump() - rightBump() each change the orientation of the turtle respective to its orientation
+  when the funtion was called. Each function changes the orientation so the turtle is using the right-hand rule to 
+  solve the maze*/
+void upBump(bool bumped){
+  switch(s){
+    case clearSpace:
+       d = right;
+       s = checkSpace;
+       break;
+    case hitWall:
+      if(bumped){
+        d = left;
+        s = hitWall;
+      }else{
+        s = clearSpace;
+      }
+      break;
+    case checkSpace:
+      if(bumped){
+        d = left;
+        s = hitWall;
+      }else{
+        s = clearSpace;
+      }
+      break;
+    default:
+         ROS_ERROR("Up case: undefined state");
+         break;
+  }
+}
+
+void leftBump(bool bumped){
+  switch(s){
+    case clearSpace:
+       d = up;
+       s = checkSpace;
+       break;
+    case hitWall:
+       if(bumped) {
+        d = down;
+        s = hitWall;
+      }else{
+        s = clearSpace;
+      }
+      break;
+    case checkSpace:
+       if(bumped) {
+        d = down;
+        s = hitWall;
+      }else{
+        s = clearSpace;
+      }
+      break;
+    default:
+       ROS_ERROR("Left case: undefined state");
+       break;
+  }
+}
+
+void downBump(bool bumped){
+  switch(s){
+    case clearSpace:
+       d = left;
+       s = checkSpace;
+       break;
+    case hitWall:
+      if (bumped) {
+        d = right;
+        s = hitWall;
+      }else{
+        s = clearSpace;
+      }
+      break;
+    case checkSpace:
+       if (bumped) {
+        d = right;
+        s = hitWall;
+      }else{
+        s = clearSpace;
+      }
+      break;
+    default:
+       ROS_ERROR("Down case: undefined state");
+       break;
+  }
+}
+
+void rightBump(bool bumped){
+  switch(s){
+    case clearSpace:
+       d = down;
+       s = checkSpace;
+       break;
+    case hitWall:
+      if(bumped) {
+        d = up;
+        s = hitWall;
+      }else{
+        s = clearSpace;
+      }
+      break;
+    case checkSpace:
+       if(bumped) {
+        d = up;
+        s = hitWall;
+      }else{
+        s = clearSpace;
+      }
+      break;
+    default:
+       ROS_ERROR("Right case: undefined state");
+       break;
+  }
 }
